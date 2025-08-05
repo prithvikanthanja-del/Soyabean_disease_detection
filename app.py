@@ -19,7 +19,7 @@ def is_leaf_image(img: Image.Image) -> bool:
     total_pixels = img_np.shape[0] * img_np.shape[1]
 
     green_ratio = green_pixels / total_pixels
-    return green_ratio > 0.2  # If more than 20% pixels are greenish, assume leaf
+    return green_ratio > 0.08 # If more than 20% pixels are greenish, assume leaf
 
 
 # --- Config ---
@@ -82,7 +82,8 @@ if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
 
     if not is_leaf_image(image):
-        st.error("❌ Leaf image not detected. Please upload a valid soybean leaf image.")
+        st.warning("⚠️ This may not look like a typical green soybean leaf. Proceeding anyway...")
+
     else:
         st.image(image, caption="Uploaded Image", use_column_width=True)
         st.success("✅ Leaf image detected.")
