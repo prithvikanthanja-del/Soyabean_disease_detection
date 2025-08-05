@@ -35,6 +35,33 @@ CLASS_NAMES = [
     'Rust',
     'Septoria brown spot'
 ]
+DISEASE_INFO = {
+    "Caterpillar": {
+        "description": "Caterpillars feed on soybean leaves, reducing photosynthesis and plant health.",
+        "treatment": "Use organic insecticides like neem oil or introduce natural predators."
+    },
+    "Frogeye leaf spot": {
+        "description": "A fungal disease causing circular lesions with dark borders and gray centers.",
+        "treatment": "Apply fungicides early and rotate crops to prevent spread."
+    },
+    "Healthy": {
+        "description": "This leaf appears healthy and free from visible diseases or pests.",
+        "treatment": "No treatment needed. Continue regular monitoring."
+    },
+    "Mosaic": {
+        "description": "Soybean mosaic virus causes leaf wrinkling and mottling with light/dark green patterns.",
+        "treatment": "Use virus-free seeds and control aphid populations."
+    },
+    "Rust": {
+        "description": "Caused by Phakopsora pachyrhizi fungus; shows as orange/reddish pustules.",
+        "treatment": "Use rust-resistant varieties and apply systemic fungicides."
+    },
+    "Septoria brown spot": {
+        "description": "Starts as small brown spots on lower leaves, may defoliate plants.",
+        "treatment": "Use crop rotation and apply preventive fungicides at early stages."
+    }
+}
+
 
 # --- Load model ---
 @st.cache_resource
@@ -58,7 +85,7 @@ if uploaded_file:
         st.error("❌ Leaf image not detected. Please upload a valid soybean leaf image.")
     else:
         st.image(image, caption="Uploaded Image", use_column_width=True)
-        st.success("✅ Leaf image detected. Processing...")
+        st.success("✅ Leaf image detected.")
 
         # Preprocess
         img_resized = image.resize(IMAGE_SIZE)
@@ -75,8 +102,16 @@ if uploaded_file:
         st.markdown(f"### 🧠 Prediction: `{predicted_class}`")
         st.markdown(f"**Confidence:** `{confidence * 100:.2f}%`")
 
+        # 📘 Disease Info
+        info = DISEASE_INFO.get(predicted_class)
+        if info:
+            st.subheader("📘 Disease Information")
+            st.markdown(f"**Description:** {info['description']}")
+            st.markdown(f"**Treatment:** {info['treatment']}")
+
         # Chart
         st.subheader("📊 Class Probabilities")
         st.bar_chart({CLASS_NAMES[i]: float(prediction[i]) for i in range(len(CLASS_NAMES))})
+
 else:
     st.info("👈 Upload an image to get started.")
